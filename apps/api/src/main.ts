@@ -30,7 +30,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api/docs", app, document);
 
-  const port = env.PORT_API || 4000;
+  const port = process.env.PORT || env.PORT_API || 4000;
   await app.listen(port);
   console.log(`🚀 API is running on: http://localhost:${port}/api`);
 }

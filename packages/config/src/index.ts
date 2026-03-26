@@ -19,6 +19,7 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(32),
   JWT_REFRESH_SECRET: z.string().min(32),
   
+  PORT: z.string().transform(Number).optional(),
   PORT_API: z.string().transform(Number).default("4000"),
   PORT_WEB: z.string().transform(Number).default("3000"),
   

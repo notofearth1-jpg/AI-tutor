@@ -12,7 +12,7 @@ import { PromptsModule } from "../../api/src/prompts/prompts.module";
       connection: {
         url: env.REDIS_URL,
         // Cloud providers like Upstash require TLS for rediss://
-        tls: env.REDIS_URL.startsWith('rediss://') ? {} : undefined,
+        tls: env.REDIS_URL?.startsWith('rediss://') ? {} : undefined,
       }
     }),
     DatabaseModule,

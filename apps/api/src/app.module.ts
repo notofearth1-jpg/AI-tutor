@@ -23,7 +23,7 @@ import { env } from "@ai-tutor/config";
       connection: {
         url: env.REDIS_URL,
         // Support rediss:// for Upstash/Cloud Redis
-        tls: env.REDIS_URL.startsWith('rediss://') ? {} : undefined,
+        tls: env.REDIS_URL?.startsWith('rediss://') ? {} : undefined,
       }
     }),
     DatabaseModule,

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/use-auth";
-import { api } from "../lib/api.client";
+import { useAuth } from "@/hooks/use-auth";
+import { api } from "@/lib/api.client";
 import { GraduationCap, LogOut, LayoutDashboard, Settings, UserCircle, Plus, Sparkles, BookOpen } from "lucide-react";
 import Link from "next/link";
 

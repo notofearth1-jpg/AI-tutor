@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "../lib/api.client";
-import { useAuth } from "../hooks/use-auth";
+import { api } from "@/lib/api.client";
+import { useAuth } from "@/hooks/use-auth";
 import { ShieldAlert, Activity, DollarSign, Database, Users, ChevronRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 

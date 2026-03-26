@@ -25,14 +25,26 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        await api.post("/auth/refresh");
-        return api(originalRequest);
-      } catch (err) {
-        // window.location.href = '/login';
+    if (error.response?.status === 401) {
+      // Avoid infinite loop if refresh itself fails
+      if (originalRequest.url?.includes("/auth/refresh")) {
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
         return Promise.reject(error);
+      }
+
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+          await api.post("/auth/refresh");
+          return api(originalRequest);
+        } catch (err) {
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
+          return Promise.reject(error);
+        }
       }
     }
     return Promise.reject(error);

@@ -1,4 +1,4 @@
-import { PrismaClient } from "./generated";
+import { PrismaClient } from "../generated-client";
 import { DEFAULT_TOPICS } from "@ai-tutor/prompts";
 import { AGENT_PROMPTS } from "@ai-tutor/prompts";
 

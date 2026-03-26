@@ -16,11 +16,26 @@ README.md
 DEPLOYMENT.md
 docker-compose*
 
-# Ignore all JSON by default for security
+# 1. Ignore all JSON files originally to prevent secret leakage
 *.json
 
-# BUT recursively allow configuration files needed for the build
-!**/package.json
-!**/tsconfig*.json
+# 2. Force inclusion of monorepo structural files
 !pnpm-workspace.yaml
 !pnpm-lock.yaml
+!package.json
+
+# 3. Explicitly whitelist every package configuration
+# This is more robust than **/package.json in some environments
+!packages/types/package.json
+!packages/config/package.json
+!packages/db/package.json
+!packages/prompts/package.json
+!packages/agent-sdk/package.json
+
+# 4. Whitelist app configurations
+!apps/api/package.json
+!apps/worker/package.json
+!apps/web/package.json
+
+# 5. Whitelist all tsconfigs
+!**/tsconfig*.json

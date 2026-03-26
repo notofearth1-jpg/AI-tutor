@@ -20,16 +20,5 @@ docker-compose*
 .env.production
 # Add other specific secret files here if needed
 
-# 2. Whitelist Monorepo Structure
-!pnpm-workspace.yaml
-!pnpm-lock.yaml
-!package.json
 
-# 3. Whitelist entire directories to prevent path pruning
-!packages/
-!apps/
 
-# 4. Explicitly allow configuration files (redundant but safe)
-!packages/**/package.json
-!apps/**/package.json
-!**/tsconfig*.json

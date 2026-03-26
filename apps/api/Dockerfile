@@ -14,13 +14,15 @@ RUN npm install -g pnpm
 
 # Copy workspace configuration and lockfiles
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/api/package.json ./apps/api/
-COPY apps/worker/package.json ./apps/worker/
-COPY packages/types/package.json ./packages/types/
-COPY packages/config/package.json ./packages/config/
-COPY packages/db/package.json ./packages/db/
-COPY packages/prompts/package.json ./packages/prompts/
-COPY packages/agent-sdk/package.json ./packages/agent-sdk/
+
+# Explicit Copying for all package descriptors
+COPY apps/api/package.json apps/api/package.json
+COPY apps/worker/package.json apps/worker/package.json
+COPY packages/types/package.json packages/types/package.json
+COPY packages/config/package.json packages/config/package.json
+COPY packages/db/package.json packages/db/package.json
+COPY packages/prompts/package.json packages/prompts/package.json
+COPY packages/agent-sdk/package.json packages/agent-sdk/package.json
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile

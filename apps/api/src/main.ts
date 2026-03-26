@@ -13,15 +13,29 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   // CORS
-  const allowedOrigins = env.CORS_ALLOWED_ORIGINS 
+  const baseOrigins = ["http://localhost:3000", "https://ai-tutor-web-omega.vercel.app"];
+  const envOrigins = env.CORS_ALLOWED_ORIGINS 
     ? env.CORS_ALLOWED_ORIGINS.split(",").map((o: string) => o.trim())
-    : ["http://localhost:3000", "https://ai-tutor-web-omega.vercel.app"];
+    : [];
+  
+  const allowedOrigins = Array.from(new Set([...baseOrigins, ...envOrigins]));
+
+  console.log(`🔒 CORS: Allowing origins: ${allowedOrigins.join(", ")}`);
 
   app.enableCors({
     origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+    allowedHeaders: [
+      "Content-Type", 
+      "Authorization", 
+      "X-Requested-With", 
+      "Accept", 
+      "Origin", 
+      "Access-Control-Allow-Origin", 
+      "Cookie"
+    ],
+    exposedHeaders: ["Set-Cookie"]
   });
 
   // Swagger

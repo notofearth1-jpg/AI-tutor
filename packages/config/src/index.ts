@@ -43,8 +43,8 @@ const envSchema = z.object({
   PORT_API: z.string().transform(Number).default("4000"),
   PORT_WEB: z.string().transform(Number).default("3000"),
   
-  NEXT_PUBLIC_API_BASE_URL: z.string().describe("The base URL of the API (e.g., ai-tutor-api.up.railway.app)"),
-  CORS_ALLOWED_ORIGINS: z.string().default("http://localhost:3000,https://ai-tutor-web-omega.vercel.app").describe("Comma-separated list of allowed origins"),
+  NEXT_PUBLIC_API_BASE_URL: z.string().describe("The base URL of the API. Can be a full URL (https://...) or a hostname."),
+  CORS_ALLOWED_ORIGINS: z.string().optional().describe("Comma-separated list of allowed origins. Defaults are http://localhost:3000,https://ai-tutor-web-omega.vercel.app."),
 
   COOKIE_DOMAIN: z.string().default("localhost"),
   COOKIE_SECURE: z.string().transform((v) => v === "true").default("false"),

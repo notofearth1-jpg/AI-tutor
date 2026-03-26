@@ -24,9 +24,11 @@ export class PlansService {
   async generatePlan(userId: string): Promise<CoursePlan> {
     const profile = await this.students.getProfile(userId);
     const mastery = await this.students.getMastery(userId);
+    const topics = await this.db.prisma.topic.findMany();
 
-    const result = await this.orchestrator.runAgent(
-      "course_creator",
+    // 1. Run Assessment Agent
+    const assessmentRaw = await this.orchestrator.runAgent(
+      "assessment",
       {
         studentProfile: profile,
         masteredTopics: mastery.map((m: any) => m.topicSlug)
@@ -35,11 +37,33 @@ export class PlansService {
       { usePro: true }
     );
 
+    const assessment = await this.db.prisma.assessment.create({
+      data: {
+        profileId: profile.id,
+        assessedLevel: (assessmentRaw as any).assessedLevel,
+        confidenceScore: (assessmentRaw as any).confidenceScore || 0,
+        knowledgeGaps: (assessmentRaw as any).knowledgeGaps || [],
+        answers: assessmentRaw as any
+      }
+    });
+
+    // 2. Run Course Creator (Planning) Agent
+    const result = await this.orchestrator.runAgent(
+      "course_creator",
+      {
+        studentProfile: profile,
+        assessmentResult: assessment,
+        topicCatalog: topics.map(t => ({ slug: t.slug, title: t.title, difficulty: t.difficulty }))
+      },
+      userId,
+      { usePro: true }
+    );
+
     return this.db.prisma.coursePlan.create({
       data: {
         userId,
-        studentLevel: (result as any).studentLevel,
-        knowledgeGaps: (result as any).knowledgeGaps || [],
+        studentLevel: assessment.assessedLevel,
+        knowledgeGaps: assessment.knowledgeGaps,
         recommendedTopics: (result as any).recommendedTopics || [],
         modules: (result as any).modules
       }

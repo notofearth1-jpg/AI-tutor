@@ -50,14 +50,26 @@ export class AgentOrchestratorService {
     let sanitized = await this.safety.screenOutput(text);
     const parsed = parseMarkdownJson(sanitized);
 
-    // 5. Audit log & Agent Run
+    // 5. Supervisor Review (Self-Correction)
+    if (agentType !== "supervisor" && !options.skipReview) {
+      const review = await this.runSupervisorAgent(sanitized, agentType, userId);
+      if (review.approved && review.improvedOutput) {
+        sanitized = typeof review.improvedOutput === "string" 
+          ? review.improvedOutput 
+          : JSON.stringify(review.improvedOutput);
+      }
+    }
+
+    const finalParsed = parseMarkdownJson(sanitized);
+
+    // 6. Audit log & Agent Run
     await this.db.prisma.agentRun.create({
       data: {
         userId,
         agentType,
         status: "completed",
         input: variables,
-        output: parsed as any,
+        output: finalParsed as any,
         latencyMs,
         modelUsed: options.usePro ? "gemini-1.5-pro" : "gemini-1.5-flash",
         tokenUsage: usage?.totalTokenCount || 0,
@@ -70,7 +82,28 @@ export class AgentOrchestratorService {
       await this.analytics.trackEvent(userId, `agent_run_${agentType}`, { usage, latencyMs });
     }
 
-    return parsed;
+    return finalParsed;
+  }
+
+  async runSupervisorAgent(rawOutput: string, originalAgent: string, userId: string | null = null) {
+    const promptTemplate = await this.promptsService.getActivePrompt("supervisor");
+    let systemPrompt = promptTemplate.promptText;
+
+    systemPrompt = systemPrompt
+      .replace("{{taskName}}", originalAgent)
+      .replace("{{rawOutput}}", rawOutput);
+
+    const { text } = await this.client.generateText(
+      "Review the agent output for quality and consistency.",
+      false, // Flash is enough for review
+      systemPrompt
+    );
+
+    return parseMarkdownJson(text) as { 
+      approved: boolean; 
+      feedback: string; 
+      improvedOutput?: any;
+    };
   }
 
   private calculateCost(tokens: number, usePro?: boolean) {

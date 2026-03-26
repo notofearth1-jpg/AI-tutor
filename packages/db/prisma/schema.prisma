@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated"
 }
 
 datasource db {
@@ -27,6 +28,8 @@ enum AgentType {
   invigilator
   supervisor
   progress_coach
+  grading
+  assessment
 }
 
 enum JobStatus {
@@ -67,7 +70,22 @@ model StudentProfile {
   createdAt              DateTime   @default(now())
   updatedAt              DateTime   @updatedAt
 
+
   topicMastery TopicMastery[]
+  assessments  Assessment[]
+}
+
+model Assessment {
+  id               String     @id @default(uuid())
+  profileId       String
+  profile         StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  answers          Json?
+  assessedLevel    Difficulty
+  confidenceScore  Float
+  knowledgeGaps     String[]
+  createdAt        DateTime   @default(now())
+
+  @@index([profileId, createdAt])
 }
 
 model Topic {

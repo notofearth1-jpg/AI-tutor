@@ -13,13 +13,14 @@ import {
   AgentRun, 
   AnalyticsEvent, 
   AuditLog,
+  Assessment,
   Role,
   Difficulty,
   AgentType,
   JobStatus
-} from "@prisma/client";
+} from "./generated";
 
-export * from "@prisma/client";
+export * from "./generated";
 
 // Explicit type exports for IDE synchronization
 export type {
@@ -35,7 +36,8 @@ export type {
   PromptTemplate,
   AgentRun,
   AnalyticsEvent,
-  AuditLog
+  AuditLog,
+  Assessment
 };
 
 // Explicit value exports for enums

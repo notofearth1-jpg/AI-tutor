@@ -36,8 +36,15 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error("❌ Invalid environment variables:", JSON.stringify(parsed.error.format(), null, 2));
-  process.exit(1);
+  console.error("❌ Environment validation failed:");
+  console.error(JSON.stringify(parsed.error.format(), null, 2));
+  
+  if (process.env.NODE_ENV === "production" || process.env.RAILWAY_ENVIRONMENT) {
+    console.warn("⚠️ Continuing anyway for cloud deployment diagnostic. Some features will fail.");
+  } else {
+    process.exit(1);
+  }
 }
 
-export const env = parsed.data;
+// Fallback logic for values that are missing during partial failure
+export const env = (parsed.success ? parsed.data : process.env) as any;

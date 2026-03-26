@@ -1,5 +1,49 @@
-import { PrismaClient } from "@prisma/client";
+import { 
+  PrismaClient, 
+  User, 
+  StudentProfile, 
+  Topic, 
+  Lesson, 
+  Assignment, 
+  Submission, 
+  Grade, 
+  CoursePlan, 
+  TopicMastery, 
+  PromptTemplate, 
+  AgentRun, 
+  AnalyticsEvent, 
+  AuditLog,
+  Role,
+  Difficulty,
+  AgentType,
+  JobStatus
+} from "@prisma/client";
 
 export * from "@prisma/client";
+
+// Explicit type exports for IDE synchronization
+export type {
+  User,
+  StudentProfile,
+  Topic,
+  Lesson,
+  Assignment,
+  Submission,
+  Grade,
+  CoursePlan,
+  TopicMastery,
+  PromptTemplate,
+  AgentRun,
+  AnalyticsEvent,
+  AuditLog
+};
+
+// Explicit value exports for enums
+export {
+  Role,
+  Difficulty,
+  AgentType,
+  JobStatus
+};
 
 export const prisma = new PrismaClient();

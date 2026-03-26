@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ai-tutor/config": ["packages/config/src"],
+      "@ai-tutor/types": ["packages/types/src"],
+      "@ai-tutor/db": ["packages/db/src"],
+      "@ai-tutor/prompts": ["packages/prompts/src"],
+      "@ai-tutor/agent-sdk-lib": ["packages/agent-sdk-lib/src"]
+    }
+  }
+}

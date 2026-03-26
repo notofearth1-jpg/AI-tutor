@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.paths.json",
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
@@ -9,16 +10,8 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strict": true,
-    "paths": {
-      "@ai-tutor/config": ["../../packages/config/src"],
-      "@ai-tutor/types": ["../../packages/types/src"],
-      "@ai-tutor/db": ["../../packages/db/src"],
-      "@ai-tutor/prompts": ["../../packages/prompts/src"],
-      "@ai-tutor/agent-sdk": ["../../packages/agent-sdk/src"]
-    }
+    "strict": true
   }
 }

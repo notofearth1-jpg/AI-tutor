@@ -11,7 +11,9 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^5.18.0"
+    "@prisma/client": "^5.18.0",
+    "@ai-tutor/types": "workspace:*",
+    "@ai-tutor/prompts": "workspace:*"
   },
   "devDependencies": {
     "prisma": "^5.18.0",

@@ -307,6 +307,12 @@ importers:
 
   packages/db:
     dependencies:
+      '@ai-tutor/prompts':
+        specifier: workspace:*
+        version: link:../prompts
+      '@ai-tutor/types':
+        specifier: workspace:*
+        version: link:../types
       '@prisma/client':
         specifier: ^5.18.0
         version: 5.22.0(prisma@5.22.0)

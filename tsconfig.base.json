@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ai-tutor/config": ["packages/config/src"],
+      "@ai-tutor/types": ["packages/types/src"],
+      "@ai-tutor/db": ["packages/db/src"],
+      "@ai-tutor/prompts": ["packages/prompts/src"],
+      "@ai-tutor/agent-sdk": ["packages/agent-sdk/src"]
+    }
+  }
+}

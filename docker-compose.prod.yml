@@ -1,0 +1,104 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: ai_tutor_postgres_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aitutor
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    networks:
+      - ai_tutor_net
+
+  redis:
+    image: redis:7
+    container_name: ai_tutor_redis_prod
+    restart: unless-stopped
+    networks:
+      - ai_tutor_net
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: ai_tutor_api_prod
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/aitutor
+      DIRECT_URL: postgresql://postgres:postgres@postgres:5432/aitutor
+      REDIS_URL: redis://redis:6379
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL_FLASH: ${GEMINI_MODEL_FLASH:-gemini-1.5-flash}
+      GEMINI_MODEL_PRO: ${GEMINI_MODEL_PRO:-gemini-1.5-pro}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      PORT_API: 4000
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      COOKIE_SECURE: ${COOKIE_SECURE}
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:4000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - ai_tutor_net
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    container_name: ai_tutor_worker_prod
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/aitutor
+      DIRECT_URL: postgresql://postgres:postgres@postgres:5432/aitutor
+      REDIS_URL: redis://redis:6379
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL_FLASH: ${GEMINI_MODEL_FLASH:-gemini-1.5-flash}
+      GEMINI_MODEL_PRO: ${GEMINI_MODEL_PRO:-gemini-1.5-pro}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      COOKIE_SECURE: ${COOKIE_SECURE}
+    networks:
+      - ai_tutor_net
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: ai_tutor_web_prod
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+      NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY}
+      NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST}
+    ports:
+      - "3000:3000"
+    networks:
+      - ai_tutor_net
+
+volumes:
+  postgres_prod_data:
+
+networks:
+  ai_tutor_net:

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "paths": {
+      "@ai-tutor/config": ["../../packages/config/src"],
+      "@ai-tutor/types": ["../../packages/types/src"],
+      "@ai-tutor/db": ["../../packages/db/src"],
+      "@ai-tutor/prompts": ["../../packages/prompts/src"],
+      "@ai-tutor/agent-sdk": ["../../packages/agent-sdk/src"]
+    }
+  }
+}

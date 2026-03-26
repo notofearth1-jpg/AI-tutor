@@ -1,0 +1,30 @@
+{
+  "name": "@ai-tutor/worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "dev": "nest start --watch",
+    "start:prod": "node dist/main"
+  },
+  "dependencies": {
+    "@ai-tutor/agent-sdk": "workspace:*",
+    "@ai-tutor/config": "workspace:*",
+    "@ai-tutor/db": "workspace:*",
+    "@ai-tutor/prompts": "workspace:*",
+    "@ai-tutor/types": "workspace:*",
+    "@nestjs/bullmq": "^10.1.1",
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "bullmq": "^5.12.10",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.0.0",
+    "@nestjs/schematics": "^10.0.0",
+    "@types/node": "^20.3.1",
+    "typescript": "^5.1.3"
+  }
+}

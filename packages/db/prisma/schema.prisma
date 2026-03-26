@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  admin
+  student
+  content_manager
+  ai_ops
+}
+
+enum Difficulty {
+  beginner
+  intermediate
+  advanced
+}
+
+enum AgentType {
+  course_creator
+  teacher
+  invigilator
+  supervisor
+  progress_coach
+}
+
+enum JobStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(student)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  studentProfile StudentProfile?
+  coursePlans    CoursePlan[]
+  submissions    Submission[]
+  analytics      AnalyticsEvent[]
+  agentRuns      AgentRun[]
+  auditLogs      AuditLog[]
+}
+
+model StudentProfile {
+  id                     String     @id @default(uuid())
+  userId                 String     @unique
+  user                   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName               String
+  ageRange               String?
+  educationBackground    String?
+  goals                  String?
+  selfReportedLevel      Difficulty
+  preferredLanguage      String     @default("en")
+  preferredLearningStyle String?
+  knownTopics            String[]
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+
+  topicMastery TopicMastery[]
+}
+
+model Topic {
+  id               String     @id @default(uuid())
+  slug             String     @unique
+  title            String
+  description      String
+  difficulty       Difficulty
+  estimatedMinutes Int
+  createdAt        DateTime   @default(now())
+
+  lessons      Lesson[]
+  masteryItems TopicMastery[]
+}
+
+model Lesson {
+  id                  String   @id @default(uuid())
+  topicId             String
+  topic               Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  lessonSlug          String   @unique
+  title               String
+  contentMarkdown     String
+  recap               String[]
+  reflectionQuestions String[]
+  metadata            Json?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  assignments Assignment[]
+}
+
+model Assignment {
+  id           String   @id @default(uuid())
+  lessonId     String
+  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  title        String
+  instructions String
+  questions    Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  submissions Submission[]
+}
+
+model Submission {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  answers      Json
+  score        Float?
+  feedback     String?
+  submittedAt  DateTime @default(now())
+  gradedAt     DateTime?
+
+  grade Grade?
+}
+
+model Grade {
+  id                   String   @id @default(uuid())
+  submissionId         String   @unique
+  submission           Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  score                Float
+  maxScore             Float    @default(100)
+  feedback             String
+  strengths            String[]
+  improvements         String[]
+  nextRecommendedTopic String?
+  createdAt            DateTime @default(now())
+}
+
+model CoursePlan {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentLevel  String
+  knowledgeGaps String[]
+  recommendedTopics String[]
+  modules       Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TopicMastery {
+  id              String   @id @default(uuid())
+  profileId       String
+  profile         StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  topicId         String
+  topic           Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topicSlug       String
+  masteryScore    Float    @default(0)
+  confidenceScore Float    @default(0)
+  attempts        Int      @default(0)
+  lastUpdated     DateTime @default(now())
+
+  @@unique([profileId, topicId])
+}
+
+model PromptTemplate {
+  id             String    @id @default(uuid())
+  agentType      AgentType
+  version        String
+  promptText     String
+  responseSchema Json
+  active         Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([agentType, version])
+}
+
+model AgentRun {
+  id            String    @id @default(uuid())
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  agentType     AgentType
+  status        JobStatus @default(pending)
+  input         Json
+  output        Json?
+  error         String?
+  latencyMs     Int?
+  modelUsed     String?
+  tokenUsage    Int       @default(0)
+  costEstimate  Float     @default(0)
+  promptVersion String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model AnalyticsEvent {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId   String?
+  eventName   String
+  properties  Json?
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  resource   String
+  resourceId String?
+  changes    Json?
+  createdAt  DateTime @default(now())
+}

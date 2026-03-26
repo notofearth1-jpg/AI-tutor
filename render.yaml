@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ai-tutor-api
+    env: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT_API
+        value: 4000
+
+  - type: worker
+    name: ai-tutor-worker
+    env: docker
+    dockerfilePath: ./apps/worker/Dockerfile
+    plan: starter
+    envVars:
+      - key: NODE_ENV
+        value: production

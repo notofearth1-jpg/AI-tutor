@@ -42,4 +42,4 @@ COPY --from=builder /app/packages ./packages
 
 RUN pnpm install --prod --no-frozen-lockfile
 
-CMD ["node", "apps/worker/dist/main"]
+CMD ["node", "apps/worker/dist/apps/worker/src/main"]

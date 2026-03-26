@@ -42,4 +42,4 @@ COPY --from=builder /app/packages ./packages
 RUN pnpm install --prod --no-frozen-lockfile
 
 EXPOSE 4000
-CMD ["node", "apps/api/dist/main"]
+CMD ["node", "apps/api/dist/apps/api/src/main"]

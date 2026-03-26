@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y \
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy workspace configuration and lockfiles first for caching
+# Copy workspace configuration and lockfiles
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/worker/package.json ./apps/worker/
 COPY apps/api/package.json ./apps/api/
+COPY apps/worker/package.json ./apps/worker/
 COPY packages/types/package.json ./packages/types/
 COPY packages/config/package.json ./packages/config/
 COPY packages/db/package.json ./packages/db/
@@ -27,23 +27,23 @@ RUN pnpm install --frozen-lockfile
 
 # Copy source and build
 COPY . .
-RUN pnpm run build --filter @ai-tutor/worker
+RUN pnpm run build --filter @ai-tutor/api
 
 # Stage 2: Runner
 FROM node:20-slim
 WORKDIR /app
 
-# Runtime dependencies (optional pnpm if needed)
 RUN npm install -g pnpm
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/pnpm-lock.yaml ./
-COPY --from=builder /app/apps/worker/package.json ./apps/worker/
-COPY --from=builder /app/apps/worker/dist ./apps/worker/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/packages ./packages
 
-# Production install (no build tools needed here usually)
+# Production install
 RUN pnpm install --prod --no-frozen-lockfile
 
-CMD ["node", "apps/worker/dist/main"]
+EXPOSE 4000
+CMD ["node", "apps/api/dist/main"]

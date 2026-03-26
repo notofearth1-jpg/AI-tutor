@@ -1,4 +1,4 @@
-import { PrismaClient, Difficulty, AgentType } from "@prisma/client";
+import { PrismaClient, Difficulty, AgentType } from "../src/generated";
 import { AGENT_PROMPTS } from "@ai-tutor/prompts";
 
 const prisma = new PrismaClient();

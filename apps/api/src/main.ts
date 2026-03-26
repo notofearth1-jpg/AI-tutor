@@ -32,6 +32,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || env.PORT_API || 4000;
   await app.listen(port);
-  console.log(`🚀 API is running on: http://localhost:${port}/api`);
+  
+  const publicUrl = env.NEXT_PUBLIC_API_BASE_URL || `http://localhost:${port}`;
+  console.log(`🚀 API is running on: ${publicUrl}/api`);
 }
 bootstrap();

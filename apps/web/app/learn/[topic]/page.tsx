@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { api } from "../../lib/api.client";
+import { api } from "@/lib/api.client";
 import { GraduationCap, ArrowLeft, Send, Sparkles, CheckCircle2, Loader2, BookOpen, ClipboardCheck } from "lucide-react";
-import { useAuth } from "../../hooks/use-auth";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function LearnPage() {
   const { topic: topicSlug } = useParams<{ topic: string }>();

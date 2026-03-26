@@ -44,7 +44,7 @@ importers:
 
   apps/api:
     dependencies:
-      '@ai-tutor/agent-sdk':
+      '@ai-tutor/agent-sdk-lib':
         specifier: workspace:*
         version: link:../../packages/agent-sdk-lib
       '@ai-tutor/config':
@@ -223,7 +223,7 @@ importers:
 
   apps/worker:
     dependencies:
-      '@ai-tutor/agent-sdk':
+      '@ai-tutor/agent-sdk-lib':
         specifier: workspace:*
         version: link:../../packages/agent-sdk-lib
       '@ai-tutor/config':

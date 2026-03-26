@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { GeminiClient, parseMarkdownJson } from "@ai-tutor/agent-sdk";
+import { GeminiClient, parseMarkdownJson } from "@ai-tutor/agent-sdk-lib";
 import { env } from "@ai-tutor/config";
 import { DatabaseService } from "../database/database.service";
 import { PromptsService } from "../prompts/prompts.service";

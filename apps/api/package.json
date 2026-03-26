@@ -17,7 +17,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@ai-tutor/agent-sdk": "workspace:*",
+    "@ai-tutor/agent-sdk-lib": "workspace:*",
     "@ai-tutor/config": "workspace:*",
     "@ai-tutor/db": "workspace:*",
     "@ai-tutor/prompts": "workspace:*",

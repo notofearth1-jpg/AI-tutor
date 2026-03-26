@@ -170,7 +170,7 @@ packages:
       "@ai-tutor/types": ["packages/types/src"],
       "@ai-tutor/db": ["packages/db/src"],
       "@ai-tutor/prompts": ["packages/prompts/src"],
-      "@ai-tutor/agent-sdk": ["packages/agent-sdk/src"]
+      "@ai-tutor/agent-sdk-lib": ["packages/agent-sdk/src"]
     }
   }
 }
@@ -1158,7 +1158,7 @@ Return STRICT JSON only:
 #### `packages/agent-sdk/package.json`
 ```json
 {
-  "name": "@ai-tutor/agent-sdk",
+  "name": "@ai-tutor/agent-sdk-lib",
   "version": "1.0.0",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -1815,7 +1815,7 @@ main()
     "test:watch": "jest --watch --config jest.config.ts"
   },
   "dependencies": {
-    "@ai-tutor/agent-sdk": "workspace:*",
+    "@ai-tutor/agent-sdk-lib": "workspace:*",
     "@ai-tutor/config": "workspace:*",
     "@ai-tutor/db": "workspace:*",
     "@ai-tutor/types": "workspace:*",
@@ -3287,7 +3287,7 @@ import {
   LessonSchema,
   AssignmentSchema,
   GradeResultSchema
-} from "@ai-tutor/agent-sdk";
+} from "@ai-tutor/agent-sdk-lib";
 import type { Assignment, StudentProfile, TopicSlug } from "@ai-tutor/types";
 
 @Injectable()
@@ -4323,7 +4323,7 @@ import { DatabaseService } from "../src/modules/database/database.service";
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-tutor/agent-sdk": "workspace:*",
+    "@ai-tutor/agent-sdk-lib": "workspace:*",
     "@ai-tutor/config": "workspace:*",
     "@ai-tutor/db": "workspace:*",
     "bullmq": "^5.16.0",
@@ -4417,7 +4417,7 @@ export const gradingQueue = new Queue("grading", { connection: redis, defaultJob
 import { Worker } from "bullmq";
 import { redis } from "./queue";
 import { prisma } from "@ai-tutor/db";
-import { runGradingAgent, runInvigilatorAgent, runTeacherAgent } from "@ai-tutor/agent-sdk";
+import { runGradingAgent, runInvigilatorAgent, runTeacherAgent } from "@ai-tutor/agent-sdk-lib";
 import { fromPrismaTopicSlug, toPrismaTopicSlug } from "../../api/src/common/topic-slug.mapper";
 
 function logWorker(name: string, message: string) {

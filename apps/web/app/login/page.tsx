@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../hooks/use-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { GraduationCap, ArrowRight, Loader2 } from "lucide-react";
 
 export default function Login() {

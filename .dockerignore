@@ -15,8 +15,12 @@ generated
 README.md
 DEPLOYMENT.md
 docker-compose*
+
+# Ignore all JSON by default for security
 *.json
-!package.json
-!tsconfig*.json
+
+# BUT recursively allow configuration files needed for the build
+!**/package.json
+!**/tsconfig*.json
 !pnpm-workspace.yaml
 !pnpm-lock.yaml

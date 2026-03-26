@@ -26,10 +26,16 @@ export function useAuth() {
     return res.data;
   };
 
+  const signup = async (email: string, pass: string) => {
+    const res = await api.post("/auth/signup", { email, password: pass, role: "student" });
+    // Automatically log in after signup
+    return login(email, pass);
+  };
+
   const logout = async () => {
     await api.post("/auth/logout");
     setUser(null);
   };
 
-  return { user, loading, login, logout, checkUser };
+  return { user, loading, login, signup, logout, checkUser };
 }

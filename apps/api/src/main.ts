@@ -13,8 +13,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   // CORS
+  const allowedOrigins = env.CORS_ALLOWED_ORIGINS 
+    ? env.CORS_ALLOWED_ORIGINS.split(",").map((o: string) => o.trim())
+    : ["http://localhost:3000", "https://ai-tutor-web-omega.vercel.app"];
+
   app.enableCors({
-    origin: ["http://localhost:3000", "https://your-web-app.com"],
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]

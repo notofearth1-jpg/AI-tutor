@@ -94,7 +94,7 @@ export default function LearnPage() {
             <div className="max-w-3xl mx-auto">
                <h1 className="text-4xl font-extrabold text-gray-900 mb-8 tracking-tight">{lesson.title}</h1>
                <div className="prose prose-blue prose-lg max-w-none text-gray-700 leading-relaxed mb-12">
-                 {lesson.contentMarkdown.split('\n').map((line, i) => (
+                 {lesson.contentMarkdown.split('\n').map((line: string, i: number) => (
                    <div key={i} className="mb-4">{line}</div>
                  ))}
                </div>

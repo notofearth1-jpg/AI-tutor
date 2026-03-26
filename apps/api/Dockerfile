@@ -22,7 +22,7 @@ COPY packages/types/package.json packages/types/package.json
 COPY packages/config/package.json packages/config/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/prompts/package.json packages/prompts/package.json
-COPY packages/agent-sdk/package.json packages/agent-sdk/package.json
+COPY packages/agent-sdk-lib/package.json packages/agent-sdk-lib/package.json
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile

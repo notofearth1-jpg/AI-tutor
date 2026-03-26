@@ -46,7 +46,7 @@ importers:
     dependencies:
       '@ai-tutor/agent-sdk':
         specifier: workspace:*
-        version: link:../../packages/agent-sdk
+        version: link:../../packages/agent-sdk-lib
       '@ai-tutor/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -225,7 +225,7 @@ importers:
     dependencies:
       '@ai-tutor/agent-sdk':
         specifier: workspace:*
-        version: link:../../packages/agent-sdk
+        version: link:../../packages/agent-sdk-lib
       '@ai-tutor/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -270,7 +270,7 @@ importers:
         specifier: ^5.1.3
         version: 5.9.3
 
-  packages/agent-sdk:
+  packages/agent-sdk-lib:
     dependencies:
       '@ai-tutor/types':
         specifier: workspace:*

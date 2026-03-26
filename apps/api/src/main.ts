@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import cookieParser from "cookie-parser";
+import cookieParser = require("cookie-parser"); // Re-pushed with require syntax to fix TS2349 in CommonJS build
 import { env } from "@ai-tutor/config";
 
 async function bootstrap() {

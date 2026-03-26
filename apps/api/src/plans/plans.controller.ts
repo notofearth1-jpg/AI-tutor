@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { PlansService } from "./plans.service";
 import { GetUser } from "../auth/get-user.decorator";
+import { CoursePlan } from "@ai-tutor/db";
 
 @UseGuards(AuthGuard("jwt"))
 @Controller("plans")
@@ -9,12 +10,12 @@ export class PlansController {
   constructor(private plansService: PlansService) {}
 
   @Get(":userId")
-  async getPlan(@Param("userId") userId: string) {
+  async getPlan(@Param("userId") userId: string): Promise<CoursePlan> {
     return this.plansService.getPlanForUser(userId);
   }
 
   @Post()
-  async generatePlan(@GetUser() user: any) {
+  async generatePlan(@GetUser() user: any): Promise<CoursePlan> {
     return this.plansService.generatePlan(user.id);
   }
 }

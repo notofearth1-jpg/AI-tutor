@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { AGENT_PROMPTS } from "@ai-tutor/prompts";
+import { PromptTemplate } from "@ai-tutor/db";
 
 @Injectable()
 export class PromptsService {
   constructor(private db: DatabaseService) {}
 
-  async getActivePrompt(agentType: any) {
+  async getActivePrompt(agentType: any): Promise<PromptTemplate | { promptText: string; version: string; }> {
     const template = await this.db.prisma.promptTemplate.findFirst({
       where: { agentType, active: true },
       orderBy: { version: "desc" }
@@ -25,13 +26,13 @@ export class PromptsService {
     return template;
   }
 
-  async getAllPrompts() {
+  async getAllPrompts(): Promise<PromptTemplate[]> {
     return this.db.prisma.promptTemplate.findMany({
       orderBy: [{ agentType: "asc" }, { version: "desc" }]
     });
   }
 
-  async createPrompt(data: any) {
+  async createPrompt(data: any): Promise<PromptTemplate> {
     if (data.active) {
       await this.db.prisma.promptTemplate.updateMany({
         where: { agentType: data.agentType },
@@ -41,7 +42,7 @@ export class PromptsService {
     return this.db.prisma.promptTemplate.create({ data });
   }
 
-  async activatePrompt(id: string) {
+  async activatePrompt(id: string): Promise<PromptTemplate> {
     const target = await this.db.prisma.promptTemplate.findUnique({ where: { id } });
     if (!target) throw new NotFoundException();
 

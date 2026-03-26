@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
+import { User, AgentRun, AnalyticsEvent } from "@ai-tutor/db";
 
 @Injectable()
 export class AdminService {
   constructor(private db: DatabaseService) {}
 
-  async getUsers(limit = 50) {
+  async getUsers(limit = 50): Promise<(User & { studentProfile: any | null })[]> {
     return this.db.prisma.user.findMany({
       take: limit,
       orderBy: { createdAt: "desc" },
@@ -13,21 +14,21 @@ export class AdminService {
     });
   }
 
-  async getAgentRuns(limit = 50) {
+  async getAgentRuns(limit = 50): Promise<AgentRun[]> {
     return this.db.prisma.agentRun.findMany({
       take: limit,
       orderBy: { createdAt: "desc" }
     });
   }
 
-  async getAnalyticsEvents(limit = 100) {
+  async getAnalyticsEvents(limit = 100): Promise<AnalyticsEvent[]> {
     return this.db.prisma.analyticsEvent.findMany({
       take: limit,
       orderBy: { createdAt: "desc" }
     });
   }
 
-  async getAgentCosts() {
+  async getAgentCosts(): Promise<Record<string, any>> {
     const runs = await this.db.prisma.agentRun.findMany({
       select: { agentType: true, modelUsed: true, tokenUsage: true, costEstimate: true }
     });

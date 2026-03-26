@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { AgentOrchestratorService } from "../agents/orchestrator.service";
 import { StudentsService } from "../students/students.service";
+import { CoursePlan } from "@ai-tutor/db";
 
 @Injectable()
 export class PlansService {
@@ -11,7 +12,7 @@ export class PlansService {
     private students: StudentsService
   ) {}
 
-  async getPlanForUser(userId: string) {
+  async getPlanForUser(userId: string): Promise<CoursePlan> {
     const plan = await this.db.prisma.coursePlan.findFirst({
       where: { userId },
       orderBy: { createdAt: "desc" }
@@ -20,7 +21,7 @@ export class PlansService {
     return plan;
   }
 
-  async generatePlan(userId: string) {
+  async generatePlan(userId: string): Promise<CoursePlan> {
     const profile = await this.students.getProfile(userId);
     const mastery = await this.students.getMastery(userId);
 

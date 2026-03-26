@@ -3,6 +3,7 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { DatabaseService } from "../database/database.service";
 import { toPrismaTopicSlug } from "../common/topic-slug.mapper";
+import { Lesson } from "@ai-tutor/db";
 
 @Injectable()
 export class LessonsService {
@@ -11,7 +12,7 @@ export class LessonsService {
     private db: DatabaseService
   ) {}
 
-  async getLesson(id: string) {
+  async getLesson(id: string): Promise<Lesson> {
     const lesson = await this.db.prisma.lesson.findUnique({
       where: { id },
       include: { topic: true }

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { DatabaseService } from "../database/database.service";
+import { Assignment } from "@ai-tutor/db";
 
 @Injectable()
 export class AssignmentsService {
@@ -11,7 +12,7 @@ export class AssignmentsService {
     private db: DatabaseService
   ) {}
 
-  async getAssignment(id: string) {
+  async getAssignment(id: string): Promise<Assignment> {
     const assignment = await this.db.prisma.assignment.findUnique({
       where: { id }
     });

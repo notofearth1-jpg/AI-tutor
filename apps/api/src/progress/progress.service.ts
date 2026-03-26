@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { StudentsService } from "../students/students.service";
+import { TopicMastery, Submission, Assignment, Grade } from "@ai-tutor/db";
 
 @Injectable()
 export class ProgressService {
@@ -9,7 +10,10 @@ export class ProgressService {
     private students: StudentsService
   ) {}
 
-  async getUserProgress(userId: string) {
+  async getUserProgress(userId: string): Promise<{
+    mastery: TopicMastery[];
+    submissions: (Submission & { assignment: Assignment | null; grade: Grade | null })[];
+  }> {
     const profile = await this.students.getProfile(userId);
     const mastery = await this.db.prisma.topicMastery.findMany({
       where: { profileId: profile.id }

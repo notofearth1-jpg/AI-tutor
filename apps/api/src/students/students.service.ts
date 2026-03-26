@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
-import { StudentProfile } from "@ai-tutor/types";
+import { StudentProfile, TopicMastery } from "@ai-tutor/db";
 
 @Injectable()
 export class StudentsService {
   constructor(private db: DatabaseService) {}
 
-  async getProfile(userId: string) {
+  async getProfile(userId: string): Promise<StudentProfile> {
     const profile = await this.db.prisma.studentProfile.findUnique({
       where: { userId }
     });
@@ -14,7 +14,7 @@ export class StudentsService {
     return profile;
   }
 
-  async createProfile(userId: string, data: any) {
+  async createProfile(userId: string, data: any): Promise<StudentProfile> {
     return this.db.prisma.studentProfile.upsert({
       where: { userId },
       update: data,
@@ -22,7 +22,7 @@ export class StudentsService {
     });
   }
 
-  async getMastery(userId: string) {
+  async getMastery(userId: string): Promise<TopicMastery[]> {
     const profile = await this.getProfile(userId);
     return this.db.prisma.topicMastery.findMany({
       where: { profileId: profile.id }

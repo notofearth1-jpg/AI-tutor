@@ -1,9 +1,9 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { prisma } from "@ai-tutor/db";
+import { prisma, PrismaClient } from "@ai-tutor/db";
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
-  get prisma() {
+  get prisma(): PrismaClient {
     return prisma;
   }
 

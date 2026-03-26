@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AssignmentsService } from "./assignments.service";
 import { GetUser } from "../auth/get-user.decorator";
+import { Assignment } from "@ai-tutor/db";
 
 @UseGuards(AuthGuard("jwt"))
 @Controller("assignments")
@@ -9,7 +10,7 @@ export class AssignmentsController {
   constructor(private assignmentsService: AssignmentsService) {}
 
   @Get(":id")
-  async getAssignment(@Param("id") id: string) {
+  async getAssignment(@Param("id") id: string): Promise<Assignment> {
     return this.assignmentsService.getAssignment(id);
   }
 

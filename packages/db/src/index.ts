@@ -18,9 +18,9 @@ import {
   Difficulty,
   AgentType,
   JobStatus
-} from "./generated";
+} from "../generated-client";
 
-export * from "./generated";
+export * from "../generated-client";
 
 // Explicit type exports for IDE synchronization
 export type {

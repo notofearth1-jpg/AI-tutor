@@ -11,6 +11,7 @@ out
 # Prisma metadata
 .prisma
 generated
+generated-client
 
 # Environment Variables (CRITICAL)
 .env

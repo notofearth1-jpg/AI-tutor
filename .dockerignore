@@ -5,9 +5,6 @@ out
 dist
 .git
 .github
-.env
-.env.local
-.env.*.local
 *.log
 coverage
 .prisma
@@ -16,26 +13,23 @@ README.md
 DEPLOYMENT.md
 docker-compose*
 
-# 1. Ignore all JSON files originally to prevent secret leakage
-*.json
+# 1. Environment and Secret Protection (Specific)
+.env
+.env.local
+.env.*.local
+.env.production
+# Add other specific secret files here if needed
 
-# 2. Force inclusion of monorepo structural files
+# 2. Whitelist Monorepo Structure
 !pnpm-workspace.yaml
 !pnpm-lock.yaml
 !package.json
 
-# 3. Explicitly whitelist every package configuration
-# This is more robust than **/package.json in some environments
-!packages/types/package.json
-!packages/config/package.json
-!packages/db/package.json
-!packages/prompts/package.json
-!packages/agent-sdk-lib/package.json
+# 3. Whitelist entire directories to prevent path pruning
+!packages/
+!apps/
 
-# 4. Whitelist app configurations
-!apps/api/package.json
-!apps/worker/package.json
-!apps/web/package.json
-
-# 5. Whitelist all tsconfigs
+# 4. Explicitly allow configuration files (redundant but safe)
+!packages/**/package.json
+!apps/**/package.json
 !**/tsconfig*.json

@@ -1,9 +1,29 @@
 import { z } from "zod";
 import * as dotenv from "dotenv";
 import * as path from "path";
+import * as fs from "fs";
+
+function findRoot(startDir: string): string {
+  let currentDir = startDir;
+  while (currentDir !== path.parse(currentDir).root) {
+    if (fs.existsSync(path.join(currentDir, "pnpm-workspace.yaml"))) {
+      return currentDir;
+    }
+    currentDir = path.dirname(currentDir);
+  }
+  return startDir;
+}
+
+const rootDir = findRoot(__dirname);
+const envPath = path.join(rootDir, ".env");
 
 // Load from root
-dotenv.config({ path: path.join(__dirname, "../../../.env") });
+dotenv.config({ path: envPath });
+
+console.log(`📂 Loading configuration from: ${envPath}`);
+if (!fs.existsSync(envPath)) {
+  console.warn(`⚠️ Warning: .env file not found at ${envPath}`);
+}
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),

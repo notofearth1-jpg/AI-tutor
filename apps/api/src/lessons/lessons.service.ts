@@ -12,13 +12,17 @@ export class LessonsService {
     private db: DatabaseService
   ) {}
 
-  async getLesson(id: string): Promise<Lesson> {
+  async getLesson(id: string) {
     const lesson = await this.db.prisma.lesson.findUnique({
       where: { id },
       include: { topic: true }
     });
     if (!lesson) throw new NotFoundException("Lesson not found");
-    return lesson;
+    
+    return {
+      ...lesson,
+      topicSlug: lesson.topic.slug
+    };
   }
 
   async startLessonGeneration(userId: string, topicSlug: string) {

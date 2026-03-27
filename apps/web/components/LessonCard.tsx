@@ -24,7 +24,7 @@ export default function LessonCard({ userId, lesson, onAssignmentCreated }: {
         method: "POST",
         body: JSON.stringify({
           userId,
-          topicSlug: lesson.topicSlug.replaceAll("_", "-"),
+          topicSlug: (lesson.topicSlug || "").replaceAll("_", "-"),
           lessonId: lesson.id
         })
       });

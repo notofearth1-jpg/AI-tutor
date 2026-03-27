@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "nest build",
+    "build": "cd ../../packages/db && npx prisma generate && cd ../../apps/api && nest build && cp -r ../../packages/db/generated-client dist/packages/db/generated-client",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "node dist/apps/api/src/main",
     "dev": "nest start --watch",

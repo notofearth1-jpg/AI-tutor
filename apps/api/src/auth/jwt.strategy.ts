@@ -13,11 +13,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
           let token = null;
           // 1. Try Cookies
           if (req?.cookies?.accessToken) token = req.cookies.accessToken;
-          // 2. Try Headers (Manually check to be safe)
+          // 2. Try Headers
           const authHeader = req.headers?.authorization;
           if (!token && authHeader?.toLowerCase().startsWith("bearer ")) {
             token = authHeader.substring(7).trim();
           }
+
+          if (process.env.NODE_ENV !== "test") {
+            const hasToken = !!token;
+            console.log(`🔐 [JwtStrategy] Auth check: { hasToken: ${hasToken}, headerPresent: ${!!authHeader} }`);
+          }
+
           return token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
         }
       ]),

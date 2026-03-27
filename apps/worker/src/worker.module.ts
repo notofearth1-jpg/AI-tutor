@@ -18,6 +18,11 @@ import { AnalyticsModule } from "../../api/src/common/analytics.module";
         maxRetriesPerRequest: null,
       }
     }),
+    BullModule.registerQueue(
+      { name: "lesson" },
+      { name: "assignment" },
+      { name: "grading" }
+    ),
     DatabaseModule,
     AgentsModule,
     PromptsModule,

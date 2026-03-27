@@ -28,9 +28,10 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
       ...(token ? { "Authorization": `Bearer ${token}` } : {}),
       ...(options?.headers || {})
     },
-    // If we have a Bearer token, we don't need cookies for cross-domain requests
-    credentials: token ? "omit" : "include",
-    cache: "no-store"
+    // Using "include" is safer for cross-origin Bearer auth in some browsers
+    credentials: "include",
+    cache: "no-store",
+    mode: "cors"
   });
 
   if (!res.ok) {

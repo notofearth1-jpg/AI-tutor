@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "build": "nest build",
-    "start": "node dist/apps/worker/src/main",
+    "start": "node dist/apps/worker/main",
     "dev": "nest start --watch",
-    "start:prod": "node dist/apps/worker/src/main"
+    "start:prod": "node dist/apps/worker/main"
   },
   "dependencies": {
     "@ai-tutor/agent-sdk-lib": "workspace:*",

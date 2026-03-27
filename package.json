@@ -6,7 +6,7 @@
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "start": "node dist/apps/api/main",
-    "start:api": "turbo run start --filter=@ai-tutor/api",
+    "start:api": "pnpm run start --filter=@ai-tutor/api",
     "start:worker": "pnpm run start --filter=@ai-tutor/worker",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

@@ -5,10 +5,10 @@
   "scripts": {
     "build": "cd ../../packages/db && npx prisma generate && cd ../../apps/api && nest build && cp -r ../../packages/db/generated-client dist/packages/db/generated-client",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "node dist/apps/api/src/main",
+    "start": "node ../../dist/apps/api/main",
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/apps/api/src/main",
+    "start:prod": "node ../../dist/apps/api/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

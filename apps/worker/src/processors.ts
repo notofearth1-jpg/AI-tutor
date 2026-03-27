@@ -13,8 +13,14 @@ export class LessonProcessor extends WorkerHost {
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    const { userId, topicSlug, topicTitle, lessonId } = job.data;
-    console.log(`Processing lesson for topic: ${topicSlug}${lessonId ? ` (Existing ID: ${lessonId})` : ""}`);
+    const data = job.data;
+    const { userId, topicTitle, lessonId } = data;
+    const topicSlug = data.topicSlug || data.prismaSlug; // Support both names for transition
+
+    console.log(`👷 [LessonProcessor] Picking up job ${job.id} for topic: ${topicSlug}`);
+    if (!topicSlug || !userId) {
+      console.warn(`⚠️ [LessonProcessor] Missing critical data in job ${job.id}`, data);
+    }
 
     try {
       // 1. Generate lesson content (Teacher Agent)

@@ -21,4 +21,10 @@ import { PromptsModule } from "../../api/src/prompts/prompts.module";
   ],
   providers: [LessonProcessor, AssignmentProcessor, GradingProcessor]
 })
-export class WorkerModule {}
+export class WorkerModule {
+  constructor() {
+    const redisUrl = env.REDIS_URL || "";
+    const maskedUrl = redisUrl.replace(/:[^@:]+@/, ":****@");
+    console.log(`🌐 [WorkerModule] Initializing with Redis: ${maskedUrl}`);
+  }
+}

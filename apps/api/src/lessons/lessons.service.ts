@@ -53,7 +53,8 @@ export class LessonsService {
     
     await this.lessonQueue.add("generate-lesson", {
       userId,
-      topicSlug: prismaSlug, // This was already named topicSlug in my previous turn, but I will ensure it matches the worker.
+      topicSlug, // Using the original raw slug for the AI, processor handles the rest
+      prismaSlug, // Adding this as extra metadata to avoid lookups
       topicTitle: topic.title,
       lessonId: lesson.id
     });

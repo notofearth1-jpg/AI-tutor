@@ -37,12 +37,26 @@ export class LessonsService {
       }
     });
 
-    const job = await this.lessonQueue.add("generate-lesson", {
+    // 2. Create Skeleton Lesson immediately to return ID to frontend
+    const lessonSlug = `${userId}_${prismaSlug}_${Date.now()}`;
+    const lesson = await this.db.prisma.lesson.create({
+      data: {
+        topicId: topic.id,
+        lessonSlug,
+        title: "Generating Lesson...",
+        contentMarkdown: "*The Teacher Agent is generating your lesson content. This usually takes 15-30 seconds.*",
+        recap: ["Generating..."],
+        reflectionQuestions: ["Generating..."]
+      }
+    });
+    
+    await this.lessonQueue.add("generate-lesson", {
       userId,
       topicSlug: prismaSlug,
-      topicTitle: topic.title
+      topicTitle: topic.title,
+      lessonId: lesson.id
     });
 
-    return { jobId: job.id, status: "queued" };
+    return { id: lesson.id, status: "generating" };
   }
 }

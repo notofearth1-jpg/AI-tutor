@@ -13,8 +13,8 @@ export class LessonProcessor extends WorkerHost {
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    const { userId, topicSlug, topicTitle } = job.data;
-    console.log(`Processing lesson for topic: ${topicSlug}`);
+    const { userId, topicSlug, topicTitle, lessonId } = job.data;
+    console.log(`Processing lesson for topic: ${topicSlug}${lessonId ? ` (Existing ID: ${lessonId})` : ""}`);
 
     // 1. Generate lesson content (Teacher Agent)
     const lessonResult = await this.orchestrator.runAgent(
@@ -30,20 +30,29 @@ export class LessonProcessor extends WorkerHost {
       userId
     );
 
-    // 3. Save to DB
-    const lesson = await this.db.prisma.lesson.create({
+    // 3. Update or Create in DB
+    const data = {
+      title: (lessonResult as any).title,
+      contentMarkdown: (lessonResult as any).contentMarkdown,
+      recap: (lessonResult as any).recap,
+      reflectionQuestions: (lessonResult as any).reflectionQuestions,
+      metadata: { supervisorNotes: (reviewResult as any).notes }
+    };
+
+    if (lessonId) {
+      return this.db.prisma.lesson.update({
+        where: { id: lessonId },
+        data
+      });
+    }
+
+    return this.db.prisma.lesson.create({
       data: {
+        ...data,
         topicId: (await this.db.prisma.topic.findUnique({ where: { slug: topicSlug } }))!.id,
-        lessonSlug: `${topicSlug}-lesson-${Date.now()}`,
-        title: (lessonResult as any).title,
-        contentMarkdown: (lessonResult as any).contentMarkdown,
-        recap: (lessonResult as any).recap,
-        reflectionQuestions: (lessonResult as any).reflectionQuestions,
-        metadata: { supervisorNotes: (reviewResult as any).notes }
+        lessonSlug: `${topicSlug}-lesson-${Date.now()}`
       }
     });
-
-    return lesson;
   }
 }
 
@@ -57,7 +66,7 @@ export class AssignmentProcessor extends WorkerHost {
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    const { userId, lessonId } = job.data;
+    const { userId, lessonId, assignmentId } = job.data;
     const lesson = await this.db.prisma.lesson.findUnique({ where: { id: lessonId } });
 
     const result = await this.orchestrator.runAgent(
@@ -66,12 +75,23 @@ export class AssignmentProcessor extends WorkerHost {
       userId
     );
 
+    const data = {
+      title: `Assignment for ${lesson?.title}`,
+      instructions: (result as any).instructions,
+      questions: (result as any).questions
+    };
+
+    if (assignmentId) {
+      return this.db.prisma.assignment.update({
+        where: { id: assignmentId },
+        data
+      });
+    }
+
     return this.db.prisma.assignment.create({
       data: {
-        lessonId,
-        title: `Assignment for ${lesson?.title}`,
-        instructions: (result as any).instructions,
-        questions: (result as any).questions
+        ...data,
+        lessonId
       }
     });
   }

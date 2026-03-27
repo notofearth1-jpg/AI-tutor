@@ -21,11 +21,27 @@ export class AssignmentsService {
   }
 
   async startAssignmentGeneration(userId: string, lessonId: string) {
-    const job = await this.assignmentQueue.add("generate-assignment", {
-      userId,
-      lessonId
+    // Check if lesson exists
+    const lesson = await this.db.prisma.lesson.findUnique({ where: { id: lessonId } });
+    if (!lesson) throw new NotFoundException("Lesson not found");
+
+    // Create Skeleton Assignment
+    const assignment = await this.db.prisma.assignment.create({
+      data: {
+        lessonId,
+        title: "Generating Assignment...",
+        instructions: "The Invigilator Agent is preparing your questions. Please wait 15-30 seconds.",
+        questions: []
+      }
     });
-    return { jobId: job.id, status: "queued" };
+
+    await this.assignmentQueue.add("generate-assignment", {
+      userId,
+      lessonId,
+      assignmentId: assignment.id
+    });
+
+    return { id: assignment.id, status: "generating" };
   }
 
   async submitAssignment(userId: string, assignmentId: string, answers: any[]) {

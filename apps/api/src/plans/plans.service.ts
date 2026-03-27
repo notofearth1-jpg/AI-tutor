@@ -59,13 +59,30 @@ export class PlansService {
       { usePro: true }
     );
 
+    const recommendedModules = (result as any).modules || [];
+
+    // Auto-register topics from the recommended modules to prevent 404s
+    for (const mod of recommendedModules) {
+      await this.db.prisma.topic.upsert({
+        where: { slug: mod.topicSlug },
+        update: {}, // Keep existing if it exists
+        create: {
+          slug: mod.topicSlug,
+          title: mod.title,
+          description: mod.reason,
+          difficulty: mod.difficulty,
+          estimatedMinutes: 20 // Default estimate
+        }
+      });
+    }
+
     return this.db.prisma.coursePlan.create({
       data: {
         userId,
         studentLevel: assessment.assessedLevel,
         knowledgeGaps: assessment.knowledgeGaps,
         recommendedTopics: (result as any).recommendedTopics || [],
-        modules: (result as any).modules
+        modules: recommendedModules
       }
     });
   }

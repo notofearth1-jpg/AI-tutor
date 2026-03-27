@@ -33,8 +33,8 @@ const envSchema = z.object({
   REDIS_URL: z.string().url().describe("Redis connection string. Use rediss:// for cloud TLS"),
   
   GEMINI_API_KEY: z.string().min(1),
-  GEMINI_MODEL_FLASH: z.string().default("gemini-1.5-flash"),
-  GEMINI_MODEL_PRO: z.string().default("gemini-1.5-pro"),
+  GEMINI_MODEL_FLASH: z.string().default("gemini-2.0-flash"),
+  GEMINI_MODEL_PRO: z.string().default("gemini-pro-latest"),
   
   JWT_SECRET: z.string().min(32),
   JWT_REFRESH_SECRET: z.string().min(32),

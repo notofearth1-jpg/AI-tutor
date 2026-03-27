@@ -6,10 +6,10 @@ export class GeminiClient {
   private flashModel: GenerativeModel;
   private proModel: GenerativeModel;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, flashModelId = "gemini-2.0-flash", proModelId = "gemini-pro-latest") {
     this.genAI = new GoogleGenerativeAI(apiKey);
-    this.flashModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    this.proModel = this.genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    this.flashModel = this.genAI.getGenerativeModel({ model: flashModelId });
+    this.proModel = this.genAI.getGenerativeModel({ model: proModelId });
   }
 
   async generateText(

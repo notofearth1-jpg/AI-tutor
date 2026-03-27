@@ -16,7 +16,11 @@ export class AgentOrchestratorService {
     private safety: SafetyService,
     private analytics: AnalyticsService
   ) {
-    this.client = new GeminiClient(env.GEMINI_API_KEY);
+    this.client = new GeminiClient(
+      env.GEMINI_API_KEY, 
+      env.GEMINI_MODEL_FLASH, 
+      env.GEMINI_MODEL_PRO
+    );
   }
 
   async runAgent(

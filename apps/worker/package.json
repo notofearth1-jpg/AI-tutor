@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "nest build",
+    "build": "cd ../../packages/db && npx prisma generate && cd ../../apps/worker && nest build && cp -r ../../packages/db/generated-client dist/packages/db/generated-client",
     "start": "node dist/apps/worker/src/main",
     "dev": "nest start --watch",
     "start:prod": "node dist/apps/worker/src/main"

@@ -16,47 +16,60 @@ export class LessonProcessor extends WorkerHost {
     const { userId, topicSlug, topicTitle, lessonId } = job.data;
     console.log(`Processing lesson for topic: ${topicSlug}${lessonId ? ` (Existing ID: ${lessonId})` : ""}`);
 
-    // 1. Generate lesson content (Teacher Agent)
-    const lessonResult = await this.orchestrator.runAgent(
-      "teacher",
-      { topic: topicTitle, studentLevel: "beginner" }, // Simplified for demo
-      userId
-    );
+    try {
+      // 1. Generate lesson content (Teacher Agent)
+      const lessonResult = await this.orchestrator.runAgent(
+        "teacher",
+        { topic: topicTitle, studentLevel: "beginner" }, // Simplified for demo
+        userId
+      );
 
-    // 2. Supervisor Review
-    const reviewResult = await this.orchestrator.runAgent(
-      "supervisor",
-      { content: lessonResult },
-      userId
-    );
+      // 2. Supervisor Review
+      const reviewResult = await this.orchestrator.runAgent(
+        "supervisor",
+        { content: lessonResult },
+        userId
+      );
 
-    // 3. Update or Create in DB
-    const data = {
-      title: (lessonResult as any).title,
-      contentMarkdown: (lessonResult as any).contentMarkdown,
-      recap: (lessonResult as any).recap,
-      reflectionQuestions: (lessonResult as any).reflectionQuestions,
-      metadata: { 
-        ...((lessonResult as any).metadata || {}), 
-        supervisorNotes: (reviewResult as any).notes,
-        status: "completed" 
+      // 3. Update in DB
+      const data = {
+        title: (lessonResult as any).title,
+        contentMarkdown: (lessonResult as any).contentMarkdown,
+        recap: (lessonResult as any).recap,
+        reflectionQuestions: (lessonResult as any).reflectionQuestions,
+        metadata: { 
+          ...((lessonResult as any).metadata || {}), 
+          supervisorNotes: (reviewResult as any).notes,
+          status: "completed" 
+        }
+      };
+
+      if (lessonId) {
+        await this.db.prisma.lesson.update({
+          where: { id: lessonId },
+          data
+        });
+      } else {
+        await this.db.prisma.lesson.create({
+          data: {
+            ...data,
+            topicId: (await this.db.prisma.topic.findUnique({ where: { slug: topicSlug } }))!.id,
+            lessonSlug: `${topicSlug}-lesson-${Date.now()}`
+          }
+        });
       }
-    };
-
-    if (lessonId) {
-      return this.db.prisma.lesson.update({
-        where: { id: lessonId },
-        data
-      });
+    } catch (e: any) {
+      console.error(`❌ Error in LessonProcessor: ${e.message}`);
+      if (lessonId) {
+        await this.db.prisma.lesson.update({
+          where: { id: lessonId },
+          data: { 
+            metadata: { status: "failed", error: e.message } 
+          }
+        });
+      }
+      throw e;
     }
-
-    return this.db.prisma.lesson.create({
-      data: {
-        ...data,
-        topicId: (await this.db.prisma.topic.findUnique({ where: { slug: topicSlug } }))!.id,
-        lessonSlug: `${topicSlug}-lesson-${Date.now()}`
-      }
-    });
   }
 }
 
@@ -71,37 +84,50 @@ export class AssignmentProcessor extends WorkerHost {
 
   async process(job: Job<any, any, string>): Promise<any> {
     const { userId, lessonId, assignmentId } = job.data;
-    const lesson = await this.db.prisma.lesson.findUnique({ where: { id: lessonId } });
+    try {
+      const lesson = await this.db.prisma.lesson.findUnique({ where: { id: lessonId } });
 
-    const result = await this.orchestrator.runAgent(
-      "invigilator",
-      { lessonContent: lesson?.contentMarkdown },
-      userId
-    );
+      const result = await this.orchestrator.runAgent(
+        "invigilator",
+        { lessonContent: lesson?.contentMarkdown },
+        userId
+      );
 
-    const data = {
-      title: `Assignment for ${lesson?.title}`,
-      instructions: (result as any).instructions,
-      questions: (result as any).questions,
-      metadata: { 
-        ...((result as any).metadata || {}), 
-        status: "completed" 
+      const data = {
+        title: `Assignment for ${lesson?.title}`,
+        instructions: (result as any).instructions,
+        questions: (result as any).questions,
+        metadata: { 
+          ...((result as any).metadata || {}), 
+          status: "completed" 
+        }
+      };
+
+      if (assignmentId) {
+        return this.db.prisma.assignment.update({
+          where: { id: assignmentId },
+          data
+        });
       }
-    };
 
-    if (assignmentId) {
-      return this.db.prisma.assignment.update({
-        where: { id: assignmentId },
-        data
+      return this.db.prisma.assignment.create({
+        data: {
+          ...data,
+          lessonId
+        }
       });
-    }
-
-    return this.db.prisma.assignment.create({
-      data: {
-        ...data,
-        lessonId
+    } catch (e: any) {
+      console.error(`❌ Error in AssignmentProcessor: ${e.message}`);
+      if (assignmentId) {
+        await this.db.prisma.assignment.update({
+          where: { id: assignmentId },
+          data: { 
+            metadata: { status: "failed", error: e.message } 
+          }
+        });
       }
-    });
+      throw e;
+    }
   }
 }
 

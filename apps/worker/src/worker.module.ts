@@ -15,6 +15,7 @@ import { AnalyticsModule } from "../../api/src/common/analytics.module";
         url: env.REDIS_URL,
         // Cloud providers like Upstash require TLS for rediss://
         tls: env.REDIS_URL?.startsWith('rediss://') ? {} : undefined,
+        maxRetriesPerRequest: null,
       }
     }),
     DatabaseModule,

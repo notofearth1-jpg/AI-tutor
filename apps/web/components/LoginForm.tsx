@@ -23,6 +23,7 @@ export default function LoginForm() {
         body: JSON.stringify(form)
       });
       const result = unwrapApiResponse<{ id: string; email: string; role: string; accessToken: string }>(resultRaw);
+      console.debug(`[LoginForm] Login success, saving token: ${result.accessToken.substring(0, 8)}...`);
       setSession({ userId: result.id, role: result.role, accessToken: result.accessToken });
       router.push(result.role === "student" ? "/dashboard" : "/admin");
     } catch (error) {

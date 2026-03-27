@@ -11,6 +11,16 @@ import { getAccessToken } from "./storage";
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getAccessToken();
+  const isProd = typeof window !== "undefined" && !window.location.hostname.includes("localhost");
+  
+  // Debug log for authentication (Visible in F12 console)
+  if (typeof window !== "undefined") {
+    console.debug(`[apiFetch] Request to ${path}`, { 
+      hasToken: !!token, 
+      tokenPrefix: token ? token.substring(0, 8) + "..." : "none" 
+    });
+  }
+
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
@@ -18,11 +28,15 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
       ...(token ? { "Authorization": `Bearer ${token}` } : {}),
       ...(options?.headers || {})
     },
-    credentials: "include",
+    // If we have a Bearer token, we don't need cookies for cross-domain requests
+    credentials: token ? "omit" : "include",
     cache: "no-store"
   });
 
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      console.warn("[apiFetch] 401 Unauthorized detected. Your session may have expired.");
+    }
     const text = await res.text();
     throw new Error(`API Error ${res.status}: ${text}`);
   }

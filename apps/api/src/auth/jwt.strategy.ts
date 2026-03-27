@@ -9,8 +9,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(private db: DatabaseService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: any) => req?.cookies?.accessToken || null,
-        ExtractJwt.fromAuthHeaderAsBearerToken()
+        (req: any) => {
+          let token = null;
+          // 1. Try Cookies
+          if (req?.cookies?.accessToken) token = req.cookies.accessToken;
+          // 2. Try Headers (Manually check to be safe)
+          const authHeader = req.headers?.authorization;
+          if (!token && authHeader?.toLowerCase().startsWith("bearer ")) {
+            token = authHeader.substring(7).trim();
+          }
+          return token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        }
       ]),
       ignoreExpiration: false,
       secretOrKey: env.JWT_SECRET

@@ -5,6 +5,8 @@ import { env } from "@ai-tutor/config";
 import { DatabaseModule } from "../../api/src/database/database.module";
 import { AgentsModule } from "../../api/src/agents/agents.module";
 import { PromptsModule } from "../../api/src/prompts/prompts.module";
+import { SafetyModule } from "../../api/src/common/safety.module";
+import { AnalyticsModule } from "../../api/src/common/analytics.module";
 
 @Module({
   imports: [
@@ -17,7 +19,9 @@ import { PromptsModule } from "../../api/src/prompts/prompts.module";
     }),
     DatabaseModule,
     AgentsModule,
-    PromptsModule
+    PromptsModule,
+    SafetyModule,
+    AnalyticsModule
   ],
   providers: [LessonProcessor, AssignmentProcessor, GradingProcessor]
 })

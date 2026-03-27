@@ -10,21 +10,30 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post("signup")
-  async signUp(@Body() body: any) {
-    return this.authService.signUp(body.email, body.password, body.role);
+  async signUp(@Body() body: any, @Res({ passthrough: true }) res: Response) {
+    const data = await this.authService.signUp(body.email, body.password, body.role);
+    this.setCookies(res, data.accessToken, data.refreshToken);
+    return { id: data.id, email: data.email, role: data.role };
   }
 
   @Post("login")
   async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const data = await this.authService.login(body.email, body.password);
     this.setCookies(res, data.accessToken, data.refreshToken);
-    return data.user;
+    return data.user || { id: data.id, email: data.email, role: data.role };
   }
 
   @Post("logout")
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+    const isProd = process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT;
+    const common = {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? ("none" as const) : ("lax" as const),
+      path: "/",
+    };
+    res.clearCookie("accessToken", common);
+    res.clearCookie("refreshToken", common);
     return { success: true };
   }
 
@@ -43,12 +52,15 @@ export class AuthController {
   }
 
   private setCookies(res: Response, access: string, refresh: string) {
+    const isProd = process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT;
+    
     const common = {
       httpOnly: true,
-      secure: env.COOKIE_SECURE,
-      sameSite: "lax" as const,
-      domain: env.COOKIE_DOMAIN
+      secure: isProd, // Must be true for SameSite=none
+      sameSite: isProd ? ("none" as const) : ("lax" as const),
+      path: "/",
     };
+
     res.cookie("accessToken", access, { ...common, maxAge: 15 * 60 * 1000 });
     res.cookie("refreshToken", refresh, { ...common, maxAge: 7 * 24 * 60 * 60 * 1000 });
   }

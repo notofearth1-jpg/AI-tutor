@@ -18,10 +18,13 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(passwordHash, salt);
 
-    return this.db.prisma.user.create({
+    const user = await this.db.prisma.user.create({
       data: { email, passwordHash: hash, role },
       select: { id: true, email: true, role: true }
     });
+
+    const tokens = await this.generateTokens(user.id, user.role);
+    return { ...user, ...tokens };
   }
 
   async login(email: string, passwordHash: string) {

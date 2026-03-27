@@ -20,7 +20,7 @@ export class AuthController {
   async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const data = await this.authService.login(body.email, body.password);
     this.setCookies(res, data.accessToken, data.refreshToken);
-    return data.user || { id: data.id, email: data.email, role: data.role };
+    return data.user;
   }
 
   @Post("logout")

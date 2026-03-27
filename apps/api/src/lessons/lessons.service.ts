@@ -46,7 +46,8 @@ export class LessonsService {
         title: "Generating Lesson...",
         contentMarkdown: "*The Teacher Agent is generating your lesson content. This usually takes 15-30 seconds.*",
         recap: ["Generating..."],
-        reflectionQuestions: ["Generating..."]
+        reflectionQuestions: ["Generating..."],
+        metadata: { status: "generating" }
       }
     });
     

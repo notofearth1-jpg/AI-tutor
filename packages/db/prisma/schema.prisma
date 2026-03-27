@@ -124,6 +124,7 @@ model Assignment {
   title        String
   instructions String
   questions    Json
+  metadata     Json?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

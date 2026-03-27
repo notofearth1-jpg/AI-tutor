@@ -36,7 +36,11 @@ export class LessonProcessor extends WorkerHost {
       contentMarkdown: (lessonResult as any).contentMarkdown,
       recap: (lessonResult as any).recap,
       reflectionQuestions: (lessonResult as any).reflectionQuestions,
-      metadata: { supervisorNotes: (reviewResult as any).notes }
+      metadata: { 
+        ...((lessonResult as any).metadata || {}), 
+        supervisorNotes: (reviewResult as any).notes,
+        status: "completed" 
+      }
     };
 
     if (lessonId) {
@@ -78,7 +82,11 @@ export class AssignmentProcessor extends WorkerHost {
     const data = {
       title: `Assignment for ${lesson?.title}`,
       instructions: (result as any).instructions,
-      questions: (result as any).questions
+      questions: (result as any).questions,
+      metadata: { 
+        ...((result as any).metadata || {}), 
+        status: "completed" 
+      }
     };
 
     if (assignmentId) {

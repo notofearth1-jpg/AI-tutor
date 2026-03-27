@@ -31,7 +31,8 @@ export class AssignmentsService {
         lessonId,
         title: "Generating Assignment...",
         instructions: "The Invigilator Agent is preparing your questions. Please wait 15-30 seconds.",
-        questions: []
+        questions: [],
+        metadata: { status: "generating" }
       }
     });
 

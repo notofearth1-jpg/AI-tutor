@@ -65,6 +65,39 @@ function DashboardInner() {
     setAssignment({ ...assignmentData, questions: Array.isArray(assignmentData.questions) ? assignmentData.questions : [] });
   }
 
+  // Polling for Lesson
+  useEffect(() => {
+    if (!lesson || lesson.metadata?.status !== "generating") return;
+    const interval = setInterval(async () => {
+      try {
+        const res = await apiFetch<any>(`/lessons/${lesson.id}`);
+        const updated = unwrapApiResponse<any>(res);
+        if (updated.metadata?.status !== "generating") {
+          setLesson(updated);
+          clearInterval(interval);
+        }
+      } catch { clearInterval(interval); }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [lesson?.id, lesson?.metadata?.status]);
+
+  // Polling for Assignment
+  useEffect(() => {
+    if (!assignment || assignment.metadata?.status !== "generating") return;
+    const interval = setInterval(async () => {
+      try {
+        const res = await apiFetch<any>(`/assignments/${assignment.id}`);
+        const updated = unwrapApiResponse<any>(res);
+        if (updated.metadata?.status !== "generating") {
+          const formatted = { ...updated, questions: Array.isArray(updated.questions) ? updated.questions : [] };
+          setAssignment(formatted);
+          clearInterval(interval);
+        }
+      } catch { clearInterval(interval); }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [assignment?.id, assignment?.metadata?.status]);
+
   if (!userId) {
     return (
       <Card>

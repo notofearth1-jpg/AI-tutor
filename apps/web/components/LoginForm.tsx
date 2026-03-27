@@ -22,8 +22,8 @@ export default function LoginForm() {
         method: "POST",
         body: JSON.stringify(form)
       });
-      const result = unwrapApiResponse<{ id: string; email: string; role: string }>(resultRaw);
-      setSession({ userId: result.id, role: result.role });
+      const result = unwrapApiResponse<{ id: string; email: string; role: string; accessToken: string }>(resultRaw);
+      setSession({ userId: result.id, role: result.role, accessToken: result.accessToken });
       router.push(result.role === "student" ? "/dashboard" : "/admin");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Login failed");

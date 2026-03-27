@@ -13,14 +13,14 @@ export class AuthController {
   async signUp(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const data = await this.authService.signUp(body.email, body.password, body.role);
     this.setCookies(res, data.accessToken, data.refreshToken);
-    return { id: data.id, email: data.email, role: data.role };
+    return { id: data.id, email: data.email, role: data.role, accessToken: data.accessToken };
   }
 
   @Post("login")
   async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const data = await this.authService.login(body.email, body.password);
     this.setCookies(res, data.accessToken, data.refreshToken);
-    return data.user;
+    return { ...data.user, accessToken: data.accessToken };
   }
 
   @Post("logout")

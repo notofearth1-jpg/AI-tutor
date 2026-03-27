@@ -22,8 +22,8 @@ export default function SignUpForm() {
         method: "POST",
         body: JSON.stringify(form)
       });
-      const result = unwrapApiResponse<{ id: string; email: string; role: string }>(resultRaw);
-      setSession({ userId: result.id, role: result.role });
+      const result = unwrapApiResponse<{ id: string; email: string; role: string; accessToken: string }>(resultRaw);
+      setSession({ userId: result.id, role: result.role, accessToken: result.accessToken });
       setMessage(`Account created for ${result.email}`);
       router.push("/dashboard");
     } catch (error) {

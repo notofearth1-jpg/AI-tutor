@@ -1,25 +1,19 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+"use client";
+
 import "./globals.css";
-import { Providers } from "./providers";
+import React, { useEffect } from "react";
+import { initSentryWeb } from "../lib/sentry";
+import { initPostHog } from "../lib/posthog";
 
-const inter = Inter({ subsets: ["latin"] });
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    initSentryWeb();
+    initPostHog();
+  }, []);
 
-export const metadata: Metadata = {
-  title: "AI Tutor Platform",
-  description: "Personalized learning powered by advanced AI agents.",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>{children}</Providers>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

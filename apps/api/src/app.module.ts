@@ -11,6 +11,7 @@ import { ProgressModule } from "./progress/progress.module";
 import { AgentsModule } from "./agents/agents.module";
 import { PromptsModule } from "./prompts/prompts.module";
 import { AdminModule } from "./admin/admin.module";
+import { JobsModule } from "./jobs/jobs.module";
 import { SafetyModule } from "./common/safety.module";
 import { AnalyticsModule } from "./common/analytics.module";
 import { LoggingModule } from "./common/logging.module";
@@ -38,7 +39,8 @@ import { env } from "@ai-tutor/config";
     ProgressModule,
     AgentsModule,
     PromptsModule,
-    AdminModule
+    AdminModule,
+    JobsModule
   ],
   controllers: [HealthController]
 })

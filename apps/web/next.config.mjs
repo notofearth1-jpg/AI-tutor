@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    transpilePackages: ["@ai-tutor/types", "@ai-tutor/config"],
+    transpilePackages: ["@ai-tutor/types"],
 };
 
 export default nextConfig;

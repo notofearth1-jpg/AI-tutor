@@ -7,13 +7,20 @@ async function bootstrap() {
     await app.init();
     console.log("🚀 AI Worker is running and listening for jobs...");
 
-    // Keep process alive indefinitely in all environments
-    return new Promise(() => {
-      /* This promise will never resolve, keeping the process alive */
-    });
+    // Keep process alive indefinitely with an active heartbeat
+    setInterval(() => {
+      // No-op to keep event loop occupied
+    }, 1000 * 60 * 60);
+
+    return app;
   } catch (error) {
     console.error("❌ Fatal error starting AI Worker:", error);
     process.exit(1);
   }
 }
-bootstrap();
+
+// Ensure the bootstrap process is properly initialized
+bootstrap().catch((err) => {
+  console.error("💥 Unhandled error in bootstrap:", err);
+  process.exit(1);
+});
